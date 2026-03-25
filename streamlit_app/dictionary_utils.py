@@ -21,8 +21,7 @@ def excel_to_json(uploaded_file):
     df = df.loc[:, required_columns]
 
     # Replace NaN with "NA"
-    df = df.fillna("NA")
-
+    df = df.where(pd.notnull(df), None)
     registers = df.to_dict(orient="records")
 
     with open("output.json", "w") as f:
