@@ -26,7 +26,7 @@ def parse_packet(raw, registers):
         try:
             short_name = str(row['Short name'])
             # 'Index' in Excel is 1-based; Python is 0-based
-            start = int(row['Index']) - 1
+            start = int(row['Index'])
             # 'Total Upto' is used as the end of the slice
             end = int(row['Total Upto'])
 
