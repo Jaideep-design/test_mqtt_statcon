@@ -3,24 +3,19 @@ import time
 from typing import Any, Dict
 
 latest_data_lock = threading.Lock()
-latest_data: Dict[str, Any] = {
-    "raw": None,
-    "parsed": None,
-    "device_id": None,
-    "topic": None,
-    "last_updated": None,
-}
+latest_data: Dict[str, Any] = {}
 
-def update_latest(raw: str, parsed_rows, device_id: str, topic: str):
-    """Update the globally shared latest data."""
+def update_latest(raw, parsed_rows, device_id, topic):
     with latest_data_lock:
-        latest_data["raw"] = raw
-        latest_data["parsed"] = parsed_rows  # list[dict]
-        latest_data["device_id"] = device_id
-        latest_data["topic"] = topic
-        latest_data["last_updated"] = time.time()
+        latest_data[device_id] = {
+            "raw": raw,
+            "parsed": parsed_rows,
+            "topic": topic,
+            "last_updated": time.time(),
+        }
 
-def get_latest_data() -> Dict[str, Any]:
-    """Return a copy of the latest data so callers can't mutate it."""
+def get_latest_data(device_id=None):
     with latest_data_lock:
-        return dict(latest_data)
+        if device_id:
+            return latest_data.get(device_id)
+        return latest_data
