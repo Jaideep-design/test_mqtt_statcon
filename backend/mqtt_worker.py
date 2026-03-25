@@ -41,7 +41,7 @@ def _mqtt_loop():
         username = _current_config["username"]
         password = _current_config["password"]
 
-    if not broker or not topic or not registers:
+    if not broker or not registers:
         return
 
     client = mqtt.Client()
