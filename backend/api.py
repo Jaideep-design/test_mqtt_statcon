@@ -73,6 +73,5 @@ def configure(payload: ConfigurePayload):
 
 
 @app.get("/latest")
-def latest():
-    data = get_latest_data()
-    return data
+def latest(device_id: str = None):
+    return get_latest_data(device_id)
