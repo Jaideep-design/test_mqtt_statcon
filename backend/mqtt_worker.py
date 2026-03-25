@@ -22,6 +22,12 @@ _current_config: Dict[str, Any] = {
     "password": None,
 }
 
+def extract_device_id(topic: str):
+    try:
+        return topic.split("/")[-2]
+    except Exception:
+        return "UNKNOWN"
+
 def _mqtt_loop():
     """Background loop that connects to MQTT and listens for messages."""
     global _stop_event
@@ -62,13 +68,16 @@ def _mqtt_loop():
 
     def on_connect(client, userdata, flags, rc):
         print(f"[MQTT] Connected with result code {rc}")
-        client.subscribe(topic)
+        client.subscribe("/GTI/STATCON/102/+/LiveData")
 
     def on_message(client, userdata, msg):
         print(f"[MQTT] Message received on {msg.topic}")
 
         raw = msg.payload.decode("utf-8", "ignore")
         parsed_rows = parse_packet(raw, registers)
+        topic = msg.topic
+        device_id = extract_device_id(topic)
+        
         update_latest(raw, parsed_rows, device_id, topic)
 
     client.on_connect = on_connect
