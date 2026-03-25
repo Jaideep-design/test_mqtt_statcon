@@ -24,31 +24,29 @@ def parse_packet(raw, registers):
 
     for _, row in df.iterrows():
         try:
-            short_name = str(row['Short name']).strip()
-
+            short_name = str(row['Short name'])
+            # 'Index' in Excel is 1-based; Python is 0-based
             start = int(row['Index'])
+            # 'Total Upto' is used as the end of the slice
             end = int(row['Total Upto'])
 
-            raw_segment = data_string[start:end]
+            # Extract the raw string segment
+            raw_segment = data_string[start:end].strip()
 
-            # If field contains only spaces
-            if raw_segment.strip() == "":
-                decoded_results.append({
-                    "Short name": short_name,
-                    "Value": "N/A",
-                    "Units": ""
-                })
+            # Skip if segment is empty
+            if not raw_segment:
+                decoded_results.append((short_name, "N/A", ""))
                 continue
 
             data_format = str(row['Data format']).strip()
-
             scaling = float(row['Scaling Factor']) if pd.notnull(row['Scaling Factor']) else 1.0
             offset = float(row['Offset']) if pd.notnull(row['Offset']) else 0.0
-            units = str(row['Units']).strip() if pd.notnull(row['Units']) else ""
+            units = str(row['Units']) if pd.notnull(row['Units']) else ""
+
+            segment = raw_segment.strip()
 
             if data_format == "ASCII":
-                final_val = raw_segment.strip()
-
+                final_val = segment
             else:
                 try:
                     numeric_val = int(segment, 16)   # ALWAYS HEX
@@ -61,6 +59,13 @@ def parse_packet(raw, registers):
                     final_val = int(final_val)
                 else:
                     final_val = round(final_val, 4)
+                # except ValueError:
+                #     # If it contains hex characters (like '3D'), parse as hex
+                #     try:
+                #         numeric_val = int(raw_segment, 16)
+                #         final_val = (numeric_val * scaling) + offset
+                #     except:
+                #         final_val = raw_segment  # Fallback to original string
 
             decoded_results.append({
                 "Short name": short_name,
