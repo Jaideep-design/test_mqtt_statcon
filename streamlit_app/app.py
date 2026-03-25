@@ -147,7 +147,10 @@ col1, col2 = st.columns([1, 2])
 with col1:
     if st.button("Manual Refresh Latest Message"):
         try:
-            resp = requests.get(f"{BACKEND_BASE_URL}/latest", timeout=5)
+            resp = requests.get(
+                f"{BACKEND_BASE_URL}/latest?device_id={st.session_state.device_id}",
+                timeout=5
+            )
             if resp.status_code == 200:
                 st.session_state.latest_data = resp.json()
             else:
@@ -158,7 +161,10 @@ with col1:
 # Auto-refresh handling
 if auto_refresh:
     try:
-        resp = requests.get(f"{BACKEND_BASE_URL}/latest", timeout=5)
+        resp = requests.get(
+            f"{BACKEND_BASE_URL}/latest?device_id={st.session_state.device_id}",
+            timeout=5
+        )
         if resp.status_code == 200:
             st.session_state.latest_data = resp.json()
         else:
