@@ -35,7 +35,11 @@ def parse_packet(raw, registers):
 
             # Skip if segment is empty
             if not raw_segment:
-                decoded_results.append((short_name, "N/A", ""))
+                decoded_results.append({
+                    "Short name": short_name,
+                    "Value": "N/A",
+                    "Units": ""
+                })
                 continue
 
             data_format = str(row['Data format']).strip()
