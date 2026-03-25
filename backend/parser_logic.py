@@ -1,7 +1,5 @@
 import pandas as pd
 
-import pandas as pd
-
 def parse_packet(raw, registers):
 
     # Accept both list-of-dicts and dataframe
@@ -53,12 +51,12 @@ def parse_packet(raw, registers):
 
             else:
                 try:
-                    numeric_val = float(raw_segment.strip())
-                except ValueError:
-                    numeric_val = int(raw_segment.strip(), 16)
-
+                    numeric_val = int(segment, 16)   # ALWAYS HEX
+                except:
+                    numeric_val = 0
+            
                 final_val = (numeric_val * scaling) + offset
-
+            
                 if final_val == int(final_val):
                     final_val = int(final_val)
                 else:
