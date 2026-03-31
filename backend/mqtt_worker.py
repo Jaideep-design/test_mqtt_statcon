@@ -68,7 +68,8 @@ def _mqtt_loop():
 
     def on_connect(client, userdata, flags, rc):
         print(f"[MQTT] Connected with result code {rc}")
-        client.subscribe("/GTI/STATCON/102/+/LiveData")
+        client.subscribe("/GTI/STATCON/16/+/LiveData")
+        # client.subscribe("/GTI/STATCON/102/+/LiveData")
         # client.subscribe("/GTI/STATCON/102/GTIPROTO00003/LiveData")
 
     def on_message(client, userdata, msg):
